@@ -1,7 +1,9 @@
 package com.pclogix.opencargo.proxy;
 
 import com.pclogix.opencargo.common.ContentRegistry;
+import com.pclogix.opencargo.common.items.ItemTag;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
@@ -13,6 +15,13 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ClientProxy extends CommonProxy {
+    @Override
+    public void init() {
+        super.init();
+        Minecraft mc = Minecraft.getMinecraft();
+        mc.getItemColors().registerItemColorHandler(new CardColorHandler(), ItemTag.DEFAULTSTACK.getItem());
+    }
+
     @Override
     public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
@@ -32,13 +41,13 @@ public class ClientProxy extends CommonProxy {
 
     }
 
-    //private static class CardColorHandler implements IItemColor {
-        //private CardColorHandler() {}
+    private static class CardColorHandler implements IItemColor {
+        private CardColorHandler() {}
 
-        //@Override
-        //public int colorMultiplier(ItemStack stack, int tintIndex) {
+        @Override
+        public int colorMultiplier(ItemStack stack, int tintIndex) {
             // TODO Auto-generated method stub
-            //return tintIndex == 0 ? 0xFFFFFF : new ItemCard.CardTag(stack.getTagCompound()).color;
-        //}
-    //}
+            return tintIndex == 0 ? 0xFFFFFF : new ItemTag.CardTag(stack.getTagCompound()).color;
+        }
+    }
 }

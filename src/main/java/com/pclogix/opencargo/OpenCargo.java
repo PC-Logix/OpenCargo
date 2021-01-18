@@ -1,11 +1,14 @@
 package com.pclogix.opencargo;
 
 import akka.event.Logging;
+import com.google.gson.JsonObject;
 import com.pclogix.opencargo.common.ContentRegistry;
 import com.pclogix.opencargo.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.IConditionFactory;
+import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -14,6 +17,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.function.BooleanSupplier;
+
 @Mod.EventBusSubscriber
 @Mod(modid = OpenCargo.MODID, name = OpenCargo.NAME, version = OpenCargo.VERSION)
 public
@@ -34,9 +40,9 @@ class OpenCargo
     public static ContentRegistry contentRegistry = new ContentRegistry();
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
+    public void preInit(FMLPreInitializationEvent e) {
         LOGGER.info("FMLPreInitializationEvent");
-        proxy.preInit(event);
+        proxy.preInit(e);
         ContentRegistry.preInit();
         MinecraftForge.EVENT_BUS.register(contentRegistry);
     }
@@ -58,4 +64,13 @@ class OpenCargo
     public static void onRegisterModels(ModelRegistryEvent event) {
         proxy.registerModels();
     }
+
+    //public static class ConditionFactory implements IConditionFactory
+    //{
+    //    @Override
+    //    public BooleanSupplier parse(JsonContext context, JsonObject json)
+    //    {
+    //        return () -> false;
+    //    }
+    //}
 }

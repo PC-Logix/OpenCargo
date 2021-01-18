@@ -1,9 +1,7 @@
 package com.pclogix.opencargo.common.container;
 
 import com.pclogix.opencargo.common.items.ItemTag;
-import com.pclogix.opencargo.common.tileentity.TagWriterTileEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
@@ -11,9 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CardInputSlot extends BaseSlot implements ISlotToolTip {
+public class ReaderCardInputSlot extends BaseSlot implements ISlotToolTip {
 
-    public CardInputSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+    public ReaderCardInputSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
     }
 
@@ -22,7 +20,7 @@ public class CardInputSlot extends BaseSlot implements ISlotToolTip {
         if(!(stack.getItem() instanceof ItemTag)) {
             return false;
         }
-        if (stack.getTagCompound() != null) {
+        if (stack.getTagCompound() == null) {
             return false;
         }
         return true;

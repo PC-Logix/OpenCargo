@@ -13,11 +13,10 @@ public class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent event) {
 
-
     }
 
     public void init(FMLInitializationEvent event) {
-        NetworkRegistry.INSTANCE.registerGuiHandler(OpenCargo.instance, new GuiProxy());
+        init();
     }
 
     public void postInit(FMLPostInitializationEvent event) {
@@ -25,5 +24,9 @@ public class CommonProxy {
     }
 
     public void registerModels() {
+    }
+
+    protected void init() {
+        NetworkRegistry.INSTANCE.registerGuiHandler(OpenCargo.instance, new GuiProxy());
     }
 }

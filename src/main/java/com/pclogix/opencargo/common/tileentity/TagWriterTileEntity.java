@@ -29,30 +29,45 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
     public static final int SIZE = 2;
     public boolean hasCards = false;
 
-    private ItemStackHandler inventoryInput;
-    private ItemStackHandler inventoryOutput;
+    private ItemWriterInventory inventoryInput = new ItemWriterInventory();
+    private ItemStackHandler inventoryOutput = new ItemStackHandler(1);
+
+    class ItemWriterInventory extends ItemStackHandler {
+        public ItemWriterInventory(){
+            super(1);
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            if(!(stack.getItem() instanceof ItemTag)) {
+                return stack;
+            }
+            if (stack.getTagCompound() != null) {
+                if (stack.getTagCompound().hasKey("data")) {
+                    return stack;
+                }
+            }
+            return super.insertItem(slot, stack, simulate);
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @Nonnull ItemStack stack){
+            switch(slot){
+                case 0: return stack.getItem() instanceof ItemTag;
+                default: return false;
+            }
+        }
+
+        @Override
+        public void onContentsChanged(int slot){
+            super.onContentsChanged(slot);
+            //updateStackTags(getStackInSlot(slot));
+        }
+    }
 
     public TagWriterTileEntity() {
         super("oc_tagwriter");
-        inventoryInput = new ItemStackHandler(1);
-        inventoryOutput = new ItemStackHandler(1);
         node = Network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector(32).create();
-    }
-
-    @Override
-    public void onConnect(final Node node) {
-        if(node.equals(node())) {
-            node.connect(oc_fs().node());
-        }
-    }
-
-    @Override
-    public void onDisconnect(final Node node) {
-        if (node.host() instanceof Context) {
-            node.disconnect(oc_fs().node());
-        } else if (node.equals(node())) {
-            oc_fs().node().remove();
-        }
     }
 
     @Override
@@ -61,15 +76,17 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         if (!hasCards && !inventoryInput.getStackInSlot(0).isEmpty()) {
             hasCards = true;
             if (node != null)
-                node.sendToReachable("computer.signal", "cardInsert", "cardInsert");
+                node.sendToReachable("computer.signal", "writerTagInsert", inventoryInput.getStackInSlot(0).getCount());
         }
 
         if (hasCards && inventoryInput.getStackInSlot(0).isEmpty()) {
             hasCards = false;
             if (node != null)
-                node.sendToReachable("computer.signal", "cardRemove", "cardRemove");
+                node.sendToReachable("computer.signal", "writerTagRemove", "writerTagRemove");
         }
     }
+
+
 
     @Callback(doc = "function(string: data, string: displayName, int: count, int: color):string; writes data to the tag, 128 characters, the rest is silently discarded, 2nd argument will change the displayed name of the tag in your inventory. if you pass an integer to the 3rd argument you can craft up to 64 at a time, the 4th argument will set the color of the card, use OC's color api.", direct = true)
     public Object[] write(Context context, Arguments args) {
@@ -90,7 +107,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
             return new Object[] { false, "Not enough tags" };
         }
 
-        if (inventoryOutput.getStackInSlot(0).getCount() >= (64 - count)) {
+        if (inventoryOutput.getStackInSlot(0).getCount() >= (65 - count)) {
             return new Object[] { false, "Not enough empty slots" };
         }
 
@@ -191,30 +208,4 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
 
         return super.getCapability(capability, facing);
     }
-
-    private IItemHandler createHandler() {
-        return new ItemStackHandler(1) {
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() == Items.DIAMOND;
-            }
-
-            @Nonnull
-            @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                if (stack.getItem() != Items.DIAMOND) {
-                    return stack;
-                }
-                return super.insertItem(slot, stack, simulate);
-            }
-        };
-    }
-
-    //@Override
-    //public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-    //    if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-    //        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemStackHandler);
-    //    }
-    //    return super.getCapability(capability, facing);
-    //}
 }
