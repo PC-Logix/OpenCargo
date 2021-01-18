@@ -1,16 +1,160 @@
 package com.pclogix.opencargo.common.tileentity;
 
+import com.pclogix.opencargo.OpenCargo;
+import com.pclogix.opencargo.common.items.ItemTag;
+import li.cil.oc.api.Network;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.Node;
+import li.cil.oc.api.network.Visibility;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class TagWriterTileEntity extends TileEntity {
+import javax.annotation.Nonnull;
+import java.awt.*;
 
-    public static final int SIZE = 9;
+public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
+
+    public static final int SIZE = 2;
+    public boolean hasCards = false;
+
+    private ItemStackHandler inventoryInput;
+    private ItemStackHandler inventoryOutput;
+
+    public TagWriterTileEntity() {
+        super("oc_tagwriter");
+        inventoryInput = new ItemStackHandler(1);
+        inventoryOutput = new ItemStackHandler(1);
+        node = Network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector(32).create();
+    }
+
+    @Override
+    public void onConnect(final Node node) {
+        if(node.equals(node())) {
+            node.connect(oc_fs().node());
+        }
+    }
+
+    @Override
+    public void onDisconnect(final Node node) {
+        if (node.host() instanceof Context) {
+            node.disconnect(oc_fs().node());
+        } else if (node.equals(node())) {
+            oc_fs().node().remove();
+        }
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (!hasCards && !inventoryInput.getStackInSlot(0).isEmpty()) {
+            hasCards = true;
+            if (node != null)
+                node.sendToReachable("computer.signal", "cardInsert", "cardInsert");
+        }
+
+        if (hasCards && inventoryInput.getStackInSlot(0).isEmpty()) {
+            hasCards = false;
+            if (node != null)
+                node.sendToReachable("computer.signal", "cardRemove", "cardRemove");
+        }
+    }
+
+    @Callback(doc = "function(string: data, string: displayName, int: count, int: color):string; writes data to the tag, 128 characters, the rest is silently discarded, 2nd argument will change the displayed name of the tag in your inventory. if you pass an integer to the 3rd argument you can craft up to 64 at a time, the 4th argument will set the color of the card, use OC's color api.", direct = true)
+    public Object[] write(Context context, Arguments args) {
+        String data = args.checkString(0);
+
+        Integer count = args.optInteger(2, 1);
+
+        if (data == null)
+            return new Object[] { false, "Data is Null" };
+
+        if (node.changeBuffer(-5) != 0)
+            return new Object[] { false, "Not enough power in OC Network." };
+
+        if (inventoryInput.getStackInSlot(0).isEmpty())
+            return new Object[] { false, "No card in slot" };
+
+        if (inventoryInput.getStackInSlot(0).getCount() - count < 0) {
+            return new Object[] { false, "Not enough tags" };
+        }
+
+        if (inventoryOutput.getStackInSlot(0).getCount() >= (64 - count)) {
+            return new Object[] { false, "Not enough empty slots" };
+        }
+
+
+        String title = args.optString(1, "");
+
+        int colorIndex = Math.max(0, Math.min(args.optInteger(3, 0), 15));
+
+        float dyeColor[] = EnumDyeColor.byMetadata(colorIndex).getColorComponentValues();
+        int color = new Color(dyeColor[0], dyeColor[1], dyeColor[2]).getRGB();
+
+        ItemStack outStack;
+
+        if (inventoryInput.getStackInSlot(0).getItem() instanceof ItemTag) {
+            outStack = new ItemStack(ItemTag.DEFAULTSTACK.getItem());
+            if (data.length() > 64) {
+                data = data.substring(0, 64);
+            }
+        }  else
+            return new Object[] { false, "Wrong item in input slot" };
+
+        ItemTag.CardTag cardTag = new ItemTag.CardTag(inventoryInput.getStackInSlot(0));
+
+        cardTag.color = color;
+        cardTag.dataTag = data;
+
+        outStack.setTagCompound(cardTag.writeToNBT(new NBTTagCompound()));
+
+        if (!title.isEmpty()) {
+            outStack.setStackDisplayName(title);
+        }
+
+        inventoryInput.getStackInSlot(0).setCount(inventoryInput.getStackInSlot(0).getCount() - count);
+        if (inventoryOutput.getStackInSlot(0).getCount() > 0) {
+            inventoryOutput.getStackInSlot(0).setCount(inventoryOutput.getStackInSlot(0).getCount() + count);
+        } else {
+            inventoryOutput.setStackInSlot(0, outStack);
+            if (count > 1) {
+                inventoryOutput.getStackInSlot(0).setCount(inventoryOutput.getStackInSlot(0).getCount() + (count -1));
+            }
+        }
+
+        return new Object[] { true };
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        if (data.hasKey("items")) {
+            //itemStackHandler.deserializeNBT((NBTTagCompound) data.getTag("items"));
+        }
+
+        inventoryInput.deserializeNBT(data.getCompoundTag("invIn"));
+        inventoryOutput.deserializeNBT(data.getCompoundTag("invOut"));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setTag("invIn", inventoryInput.serializeNBT());
+        data.setTag("invOut", inventoryOutput.serializeNBT());
+        //data.setTag("items", itemStackHandler.serializeNBT());
+        return data;
+    }
 
     // This item handler will hold our nine inventory slots
     private ItemStackHandler itemStackHandler = new ItemStackHandler(SIZE) {
@@ -21,21 +165,6 @@ public class TagWriterTileEntity extends TileEntity {
             TagWriterTileEntity.this.markDirty();
         }
     };
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        if (compound.hasKey("items")) {
-            itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
-        }
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
-        compound.setTag("items", itemStackHandler.serializeNBT());
-        return compound;
-    }
 
     public boolean canInteractWith(EntityPlayer playerIn) {
         // If we are too far away from this tile entity you cannot use it
@@ -50,11 +179,42 @@ public class TagWriterTileEntity extends TileEntity {
         return super.hasCapability(capability, facing);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemStackHandler);
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+        if (facing != null && capability.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)) {
+            if(facing.equals(EnumFacing.DOWN))
+                return (T) inventoryOutput;
+            else
+                return (T) inventoryInput;
         }
+
         return super.getCapability(capability, facing);
     }
+
+    private IItemHandler createHandler() {
+        return new ItemStackHandler(1) {
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() == Items.DIAMOND;
+            }
+
+            @Nonnull
+            @Override
+            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+                if (stack.getItem() != Items.DIAMOND) {
+                    return stack;
+                }
+                return super.insertItem(slot, stack, simulate);
+            }
+        };
+    }
+
+    //@Override
+    //public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    //    if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+    //        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemStackHandler);
+    //    }
+    //    return super.getCapability(capability, facing);
+    //}
 }

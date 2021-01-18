@@ -1,34 +1,32 @@
 package com.pclogix.opencargo.common.blocks;
 
 import com.pclogix.opencargo.OpenCargo;
+import com.pclogix.opencargo.common.tileentity.TagReaderTileEntity;
 import com.pclogix.opencargo.common.tileentity.TagWriterTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TagWriterBlock extends BlockCargobase implements ITileEntityProvider {
+public class TagReaderBlock extends BlockCargobase implements ITileEntityProvider {
 
-    public static final String NAME = "tagwriterblock";
+    public static final String NAME = "tagreaderblock";
     public static Block DEFAULTITEM;
 
-    public static final int GUI_ID = 1;
+    public static final int GUI_ID = 2;
 
-    public TagWriterBlock() {
+    public TagReaderBlock() {
         super(NAME, Material.IRON, 0.5f);
     }
 
@@ -39,7 +37,7 @@ public class TagWriterBlock extends BlockCargobase implements ITileEntityProvide
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TagWriterTileEntity();
+        return new TagReaderTileEntity();
     }
 
     @Override
@@ -50,7 +48,7 @@ public class TagWriterBlock extends BlockCargobase implements ITileEntityProvide
             return true;
         }
         TileEntity te = world.getTileEntity(pos);
-        if (!(te instanceof TagWriterTileEntity)) {
+        if (!(te instanceof TagReaderTileEntity)) {
             return false;
         }
         player.openGui(OpenCargo.instance, GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());

@@ -1,0 +1,9 @@
+# Items
+item.opencargo.itemtag.name=Tag
+
+# Blocks
+tile.opencargo.tagwriterblock.name=Tag Writer
+tile.opencargo.tagreaderblock.name=Tag Reader
+
+# Creative Tabs
+itemGroup.opencargo.tabopencargo=Open Cargo

@@ -1,6 +1,8 @@
 package com.pclogix.opencargo.common.gui;
 
+import com.pclogix.opencargo.common.container.TagReaderContainer;
 import com.pclogix.opencargo.common.container.TagWriterContainer;
+import com.pclogix.opencargo.common.tileentity.TagReaderTileEntity;
 import com.pclogix.opencargo.common.tileentity.TagWriterTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -17,6 +19,9 @@ public class GuiProxy implements IGuiHandler {
         if (te instanceof TagWriterTileEntity) {
             return new TagWriterContainer(player.inventory, (TagWriterTileEntity) te);
         }
+        if (te instanceof TagReaderTileEntity) {
+            return new TagReaderContainer(player.inventory, (TagReaderTileEntity) te);
+        }
         return null;
     }
 
@@ -27,6 +32,10 @@ public class GuiProxy implements IGuiHandler {
         if (te instanceof TagWriterTileEntity) {
             TagWriterTileEntity containerTileEntity = (TagWriterTileEntity) te;
             return new TagWriterGui(containerTileEntity, new TagWriterContainer(player.inventory, containerTileEntity));
+        }
+        if (te instanceof TagReaderTileEntity) {
+            TagReaderTileEntity containerTileEntity = (TagReaderTileEntity) te;
+            return new TagReaderGui(containerTileEntity, new TagReaderContainer(player.inventory, containerTileEntity));
         }
         return null;
     }

@@ -3,7 +3,7 @@
   "defaults": {
     "textures": {
       "top": "opencargo:blocks/machine_side",
-      "front": "opencargo:blocks/tagwriter",
+      "front": "opencargo:blocks/tagreader",
       "side": "opencargo:blocks/machine_side"
     },
     "model": "minecraft:orientable"

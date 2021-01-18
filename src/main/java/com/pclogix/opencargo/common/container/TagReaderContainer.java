@@ -1,22 +1,20 @@
 package com.pclogix.opencargo.common.container;
 
-import com.pclogix.opencargo.OpenCargo;
-import com.pclogix.opencargo.common.tileentity.TagWriterTileEntity;
+import com.pclogix.opencargo.common.tileentity.TagReaderTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class TagWriterContainer extends Container {
+public class TagReaderContainer extends Container {
 
-    private TagWriterTileEntity te;
+    private TagReaderTileEntity te;
 
-    public TagWriterContainer(IInventory playerInventory, TagWriterTileEntity te) {
+    public TagReaderContainer(IInventory playerInventory, TagReaderTileEntity te) {
         this.te = te;
 
         // This container references items out of our own inventory (the 9 slots we hold ourselves)
@@ -45,12 +43,17 @@ public class TagWriterContainer extends Container {
     }
 
     private void addOwnSlots() {
-        IItemHandler itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.EAST);
-        // Add our own slots
-        addSlotToContainer(new CardInputSlot(itemHandler, 0, 80, 36));
+        IItemHandler itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        int x = 80;
+        int y = 36;
 
-        itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-        addSlotToContainer(new CardOutputSlot(itemHandler, 0, 80, 87));
+        // Add our own slots
+        int slotIndex = 0;
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            addSlotToContainer(new CardInputSlot(itemHandler, slotIndex, x, y));
+            slotIndex++;
+            x += 18;
+        }
     }
 
     @Override
@@ -62,11 +65,11 @@ public class TagWriterContainer extends Container {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            if (index < TagWriterTileEntity.SIZE) {
-                if (!this.mergeItemStack(itemstack1, TagWriterTileEntity.SIZE, this.inventorySlots.size(), true)) {
+            if (index < TagReaderTileEntity.SIZE) {
+                if (!this.mergeItemStack(itemstack1, TagReaderTileEntity.SIZE, this.inventorySlots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.mergeItemStack(itemstack1, 0, TagWriterTileEntity.SIZE, false)) {
+            } else if (!this.mergeItemStack(itemstack1, 0, TagReaderTileEntity.SIZE, false)) {
                 return ItemStack.EMPTY;
             }
 
