@@ -64,7 +64,7 @@ public class TagReaderTileEntity extends TileEntityOCBase implements ITickable {
     @Callback
     public Object[] read(Context context, Arguments args) {
         if (!inventoryInput.getStackInSlot(0).isEmpty()) {
-            return new Object[] { true, inventoryInput.getStackInSlot(0).getTagCompound().getTag("data").toString(), inventoryInput.getStackInSlot(0).getCount() };
+            return new Object[] { true, inventoryInput.getStackInSlot(0).getTagCompound().getString("data"), inventoryInput.getStackInSlot(0).getCount() };
         }
 
         return new Object[] { false, "No tag" };
