@@ -3,6 +3,7 @@ package com.pclogix.opencargo;
 import akka.event.Logging;
 import com.google.gson.JsonObject;
 import com.pclogix.opencargo.common.ContentRegistry;
+import com.pclogix.opencargo.common.items.ItemCard;
 import com.pclogix.opencargo.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.client.event.ModelRegistryEvent;

@@ -1,0 +1,7 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "opencargo:items/itemtag_long_2",
+		"layer1": "opencargo:items/itemtag_long_2_color"
+	}
+}

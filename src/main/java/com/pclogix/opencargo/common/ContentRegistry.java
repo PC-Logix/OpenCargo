@@ -3,7 +3,7 @@ package com.pclogix.opencargo.common;
 import com.pclogix.opencargo.OpenCargo;
 import com.pclogix.opencargo.common.blocks.TagReaderBlock;
 import com.pclogix.opencargo.common.blocks.TagWriterBlock;
-import com.pclogix.opencargo.common.items.ItemTag;
+import com.pclogix.opencargo.common.items.*;
 import com.pclogix.opencargo.common.tileentity.TagReaderTileEntity;
 import com.pclogix.opencargo.common.tileentity.TagWriterTileEntity;
 import li.cil.oc.api.driver.DriverItem;
@@ -55,6 +55,12 @@ public class ContentRegistry {
         modBlocks.add(TagWriterBlock.DEFAULTITEM = new TagWriterBlock());
         modBlocks.add(TagReaderBlock.DEFAULTITEM = new TagReaderBlock());
         modItems.add(ItemTag.DEFAULTSTACK = new ItemStack(new ItemTag()));
+        modItems.add(ItemTagBulk.DEFAULTSTACK = new ItemStack(new ItemTagBulk()));
+        modItems.add(ItemTagCooled.DEFAULTSTACK = new ItemStack(new ItemTagCooled()));
+        modItems.add(ItemTagFluid.DEFAULTSTACK = new ItemStack(new ItemTagFluid()));
+        modItems.add(ItemTagLiving.DEFAULTSTACK = new ItemStack(new ItemTagLiving()));
+        modItems.add(ItemTagLong.DEFAULTSTACK = new ItemStack(new ItemTagLong()));
+        modItems.add(ItemTagLong2.DEFAULTSTACK = new ItemStack(new ItemTagLong2()));
     }
 
 

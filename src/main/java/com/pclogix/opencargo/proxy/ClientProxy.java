@@ -1,9 +1,11 @@
 package com.pclogix.opencargo.proxy;
 
 import com.pclogix.opencargo.common.ContentRegistry;
-import com.pclogix.opencargo.common.items.ItemTag;
+import com.pclogix.opencargo.common.items.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
@@ -13,6 +15,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ClientProxy extends CommonProxy {
     @Override
@@ -20,6 +24,12 @@ public class ClientProxy extends CommonProxy {
         super.init();
         Minecraft mc = Minecraft.getMinecraft();
         mc.getItemColors().registerItemColorHandler(new CardColorHandler(), ItemTag.DEFAULTSTACK.getItem());
+        mc.getItemColors().registerItemColorHandler(new CardColorHandler(), ItemTagBulk.DEFAULTSTACK.getItem());
+        mc.getItemColors().registerItemColorHandler(new CardColorHandler(), ItemTagCooled.DEFAULTSTACK.getItem());
+        mc.getItemColors().registerItemColorHandler(new CardColorHandler(), ItemTagFluid.DEFAULTSTACK.getItem());
+        mc.getItemColors().registerItemColorHandler(new CardColorHandler(), ItemTagLiving.DEFAULTSTACK.getItem());
+        mc.getItemColors().registerItemColorHandler(new CardColorHandler(), ItemTagLong.DEFAULTSTACK.getItem());
+        mc.getItemColors().registerItemColorHandler(new CardColorHandler(), ItemTagLong2.DEFAULTSTACK.getItem());
     }
 
     @Override
@@ -27,6 +37,8 @@ public class ClientProxy extends CommonProxy {
         super.preInit(e);
         MinecraftForge.EVENT_BUS.register(this);
     }
+
+
 
     @Override
     public void registerModels() {
@@ -38,7 +50,6 @@ public class ClientProxy extends CommonProxy {
 
         for(ItemStack itemStack : ContentRegistry.modItems)
             ModelLoader.setCustomModelResourceLocation(itemStack.getItem(), 0, new ModelResourceLocation(itemStack.getItem().getRegistryName().toString()));
-
     }
 
     private static class CardColorHandler implements IItemColor {
@@ -47,7 +58,7 @@ public class ClientProxy extends CommonProxy {
         @Override
         public int colorMultiplier(ItemStack stack, int tintIndex) {
             // TODO Auto-generated method stub
-            return tintIndex == 0 ? 0xFFFFFF : new ItemTag.CardTag(stack.getTagCompound()).color;
+            return tintIndex == 0 ? 0xFFFFFF : new ItemCard.CardTag(stack.getTagCompound()).color;
         }
     }
 }

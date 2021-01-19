@@ -1,5 +1,6 @@
 package com.pclogix.opencargo.common.container;
 
+import com.pclogix.opencargo.common.items.ItemCard;
 import com.pclogix.opencargo.common.items.ItemTag;
 import com.pclogix.opencargo.common.tileentity.TagWriterTileEntity;
 import net.minecraft.item.ItemStack;
@@ -19,7 +20,7 @@ public class CardInputSlot extends BaseSlot implements ISlotToolTip {
 
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
-        if(!(stack.getItem() instanceof ItemTag)) {
+        if(!(stack.getItem() instanceof ItemCard)) {
             return false;
         }
         if (stack.getTagCompound() != null) {

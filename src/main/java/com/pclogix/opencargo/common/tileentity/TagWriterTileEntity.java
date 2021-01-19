@@ -1,6 +1,7 @@
 package com.pclogix.opencargo.common.tileentity;
 
 import com.pclogix.opencargo.OpenCargo;
+import com.pclogix.opencargo.common.items.ItemCard;
 import com.pclogix.opencargo.common.items.ItemTag;
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
@@ -39,7 +40,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
 
         @Override
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            if(!(stack.getItem() instanceof ItemTag)) {
+            if(!(stack.getItem() instanceof ItemCard)) {
                 return stack;
             }
             if (stack.getTagCompound() != null) {
@@ -53,7 +54,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         @Override
         public boolean isItemValid(int slot, @Nonnull ItemStack stack){
             switch(slot){
-                case 0: return stack.getItem() instanceof ItemTag;
+                case 0: return stack.getItem() instanceof ItemCard;
                 default: return false;
             }
         }
@@ -121,8 +122,8 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
 
         ItemStack outStack;
 
-        if (inventoryInput.getStackInSlot(0).getItem() instanceof ItemTag) {
-            outStack = new ItemStack(ItemTag.DEFAULTSTACK.getItem());
+        if (inventoryInput.getStackInSlot(0).getItem() instanceof ItemCard) {
+            outStack = new ItemStack(inventoryInput.getStackInSlot(0).getItem());
             if (data.length() > 64) {
                 data = data.substring(0, 64);
             }

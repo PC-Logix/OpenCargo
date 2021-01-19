@@ -1,0 +1,22 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"X X",
+		" # ",
+		"XPX"
+	],
+	"key": {
+		"#": {
+			"item": "#opencomputers_chip2"
+		},
+		"X": {
+			"item": "minecraft:iron_ingot"
+		},
+		"P": {
+			"item": "#opencomputers_pcb"
+		}
+	},
+	"result": {
+		"item": "opencargo:tagreaderblock"
+	}
+}

@@ -1,5 +1,8 @@
 package com.pclogix.opencargo.common.items;
 
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,10 +11,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.UUID;
 
-public abstract class ItemCard extends ItemOCBase {
+public class ItemCard extends ItemOCBase {
 
     ItemCard(String name) {
         super(name);
@@ -20,6 +26,19 @@ public abstract class ItemCard extends ItemOCBase {
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         return EnumActionResult.SUCCESS;
+    }
+
+    private boolean isBulk(ItemStack stack) {
+        return getTagCompoundSafe(stack).hasKey("bulk");
+    }
+
+    private NBTTagCompound getTagCompoundSafe(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+            stack.setTagCompound(tagCompound);
+        }
+        return tagCompound;
     }
 
     public static class CardTag{
