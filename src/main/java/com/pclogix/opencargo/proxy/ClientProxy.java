@@ -38,8 +38,6 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-
-
     @Override
     public void registerModels() {
         for(Block block : ContentRegistry.modBlocks)

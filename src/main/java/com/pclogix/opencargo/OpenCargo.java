@@ -43,7 +43,7 @@ class OpenCargo
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
-        LOGGER.info("FMLPreInitializationEvent");
+        LOGGER.info(NAME + " FMLPreInitializationEvent");
         proxy.preInit(e);
         ContentRegistry.preInit();
         MinecraftForge.EVENT_BUS.register(contentRegistry);
@@ -53,13 +53,13 @@ class OpenCargo
     public void init(FMLInitializationEvent e) {
         proxy.init(e);
         ContentRegistry.init();
-        LOGGER.info("FMLInitializationEvent");
+        LOGGER.info(NAME + " FMLInitializationEvent");
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
-        LOGGER.info("FMLPostInitializationEvent");
+        LOGGER.info(NAME + " FMLPostInitializationEvent");
     }
 
     @SubscribeEvent
