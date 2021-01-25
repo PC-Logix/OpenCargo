@@ -1,6 +1,5 @@
 package com.pclogix.opencargo.common.container;
 
-import com.pclogix.opencargo.OpenCargo;
 import com.pclogix.opencargo.common.tileentity.TagWriterTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -10,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
 
 public class TagWriterContainer extends Container {
 
@@ -48,9 +46,7 @@ public class TagWriterContainer extends Container {
         IItemHandler itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.EAST);
         // Add our own slots
         addSlotToContainer(new CardInputSlot(itemHandler, 0, 80, 36));
-
-        itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-        addSlotToContainer(new CardOutputSlot(itemHandler, 0, 80, 87));
+        addSlotToContainer(new CardOutputSlot(itemHandler, 1, 80, 87));
     }
 
     @Override

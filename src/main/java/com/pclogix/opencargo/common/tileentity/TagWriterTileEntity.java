@@ -1,25 +1,21 @@
 package com.pclogix.opencargo.common.tileentity;
 
-import com.pclogix.opencargo.OpenCargo;
 import com.pclogix.opencargo.common.items.ItemCard;
 import com.pclogix.opencargo.common.items.ItemTag;
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.Node;
 import li.cil.oc.api.network.Visibility;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -30,16 +26,16 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
     public static final int SIZE = 2;
     public boolean hasCards = false;
 
-    private ItemWriterInventory inventoryInput = new ItemWriterInventory();
-    private ItemStackHandler inventoryOutput = new ItemStackHandler(1);
+    private ItemWriterInventory inventory = new ItemWriterInventory();
 
     class ItemWriterInventory extends ItemStackHandler {
         public ItemWriterInventory(){
-            super(1);
+            super(2);
         }
 
         @Override
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            System.out.println("Insert into slot " + slot + " item: " + stack.getItem().getUnlocalizedName());
             if(!(stack.getItem() instanceof ItemCard)) {
                 return stack;
             }
@@ -48,7 +44,17 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
                     return stack;
                 }
             }
+            if (slot != 0)
+                return stack;
             return super.insertItem(slot, stack, simulate);
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (slot != 1)
+                return new ItemStack(new Item(), 0);
+            return super.extractItem(slot, amount, simulate);
         }
 
         @Override
@@ -74,13 +80,13 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
     @Override
     public void update() {
         super.update();
-        if (!hasCards && !inventoryInput.getStackInSlot(0).isEmpty()) {
+        if (!hasCards && !inventory.getStackInSlot(0).isEmpty()) {
             hasCards = true;
             if (node != null)
-                node.sendToReachable("computer.signal", "writerTagInsert", inventoryInput.getStackInSlot(0).getCount());
+                node.sendToReachable("computer.signal", "writerTagInsert", inventory.getStackInSlot(0).getCount());
         }
 
-        if (hasCards && inventoryInput.getStackInSlot(0).isEmpty()) {
+        if (hasCards && inventory.getStackInSlot(0).isEmpty()) {
             hasCards = false;
             if (node != null)
                 node.sendToReachable("computer.signal", "writerTagRemove", "writerTagRemove");
@@ -101,14 +107,14 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         if (node.changeBuffer(-5) != 0)
             return new Object[] { false, "Not enough power in OC Network." };
 
-        if (inventoryInput.getStackInSlot(0).isEmpty())
+        if (inventory.getStackInSlot(0).isEmpty())
             return new Object[] { false, "No card in slot" };
 
-        if (inventoryInput.getStackInSlot(0).getCount() - count < 0) {
+        if (inventory.getStackInSlot(0).getCount() - count < 0) {
             return new Object[] { false, "Not enough tags" };
         }
 
-        if (inventoryOutput.getStackInSlot(0).getCount() >= (65 - count)) {
+        if (inventory.getStackInSlot(1).getCount() >= (65 - count)) {
             return new Object[] { false, "Not enough empty slots" };
         }
 
@@ -122,15 +128,15 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
 
         ItemStack outStack;
 
-        if (inventoryInput.getStackInSlot(0).getItem() instanceof ItemCard) {
-            outStack = new ItemStack(inventoryInput.getStackInSlot(0).getItem());
+        if (inventory.getStackInSlot(0).getItem() instanceof ItemCard) {
+            outStack = new ItemStack(inventory.getStackInSlot(0).getItem());
             if (data.length() > 64) {
                 data = data.substring(0, 64);
             }
         }  else
             return new Object[] { false, "Wrong item in input slot" };
 
-        ItemTag.CardTag cardTag = new ItemTag.CardTag(inventoryInput.getStackInSlot(0));
+        ItemTag.CardTag cardTag = new ItemTag.CardTag(inventory.getStackInSlot(0));
 
         cardTag.color = color;
         cardTag.dataTag = data;
@@ -141,13 +147,13 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
             outStack.setStackDisplayName(title);
         }
 
-        inventoryInput.getStackInSlot(0).setCount(inventoryInput.getStackInSlot(0).getCount() - count);
-        if (inventoryOutput.getStackInSlot(0).getCount() > 0) {
-            inventoryOutput.getStackInSlot(0).setCount(inventoryOutput.getStackInSlot(0).getCount() + count);
+        inventory.getStackInSlot(0).setCount(inventory.getStackInSlot(0).getCount() - count);
+        if (inventory.getStackInSlot(1).getCount() > 0) {
+            inventory.getStackInSlot(1).setCount(inventory.getStackInSlot(1).getCount() + count);
         } else {
-            inventoryOutput.setStackInSlot(0, outStack);
+            inventory.setStackInSlot(1, outStack);
             if (count > 1) {
-                inventoryOutput.getStackInSlot(0).setCount(inventoryOutput.getStackInSlot(0).getCount() + (count -1));
+                inventory.getStackInSlot(1).setCount(inventory.getStackInSlot(1).getCount() + (count -1));
             }
         }
 
@@ -161,15 +167,13 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
             //itemStackHandler.deserializeNBT((NBTTagCompound) data.getTag("items"));
         }
 
-        inventoryInput.deserializeNBT(data.getCompoundTag("invIn"));
-        inventoryOutput.deserializeNBT(data.getCompoundTag("invOut"));
+        inventory.deserializeNBT(data.getCompoundTag("inv"));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setTag("invIn", inventoryInput.serializeNBT());
-        data.setTag("invOut", inventoryOutput.serializeNBT());
+        data.setTag("inv", inventory.serializeNBT());
         //data.setTag("items", itemStackHandler.serializeNBT());
         return data;
     }
@@ -201,10 +205,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (facing != null && capability.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)) {
-            if(facing.equals(EnumFacing.DOWN))
-                return (T) inventoryOutput;
-            else
-                return (T) inventoryInput;
+            return (T) inventory;
         }
 
         return super.getCapability(capability, facing);
