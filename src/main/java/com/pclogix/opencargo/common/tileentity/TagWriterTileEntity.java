@@ -30,12 +30,11 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
 
     class ItemWriterInventory extends ItemStackHandler {
         public ItemWriterInventory(){
-            super(2);
+            super(SIZE);
         }
 
         @Override
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            System.out.println("Insert into slot " + slot + " item: " + stack.getItem().getUnlocalizedName());
             if(!(stack.getItem() instanceof ItemCard)) {
                 return stack;
             }
@@ -53,7 +52,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (slot != 1)
-                return new ItemStack(new Item(), 0);
+                return ItemStack.EMPTY;
             return super.extractItem(slot, amount, simulate);
         }
 
