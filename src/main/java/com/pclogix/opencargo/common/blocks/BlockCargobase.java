@@ -3,6 +3,8 @@ package com.pclogix.opencargo.common.blocks;
 import com.pclogix.opencargo.OpenCargo;
 import com.pclogix.opencargo.common.ContentRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
