@@ -9,6 +9,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -19,7 +21,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TagReaderBlock extends BlockCargobase implements ITileEntityProvider {
+public class TagReaderBlock extends BlockCargobase {
 
     public static final String NAME = "tagreaderblock";
     public static Block DEFAULTITEM;
@@ -53,5 +55,16 @@ public class TagReaderBlock extends BlockCargobase implements ITileEntityProvide
         }
         player.openGui(OpenCargo.instance, GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
+    }
+
+    @Override
+    public void breakBlock(final World world, final BlockPos pos, final IBlockState state) {
+        final TileEntity tile = world.getTileEntity(pos);
+        if ((tile != null) && (tile instanceof TagReaderTileEntity)) {
+            final TagReaderTileEntity TagReader = (TagReaderTileEntity) tile;
+            TagReader.getInventory().dropItems(world, pos.getX(), pos.getY(), pos.getZ());
+        }
+
+        super.breakBlock(world, pos, state);
     }
 }

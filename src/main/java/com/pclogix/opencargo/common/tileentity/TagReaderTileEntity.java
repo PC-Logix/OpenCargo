@@ -1,5 +1,6 @@
 package com.pclogix.opencargo.common.tileentity;
 
+import com.pclogix.opencargo.common.container.ItemReaderInventory;
 import com.pclogix.opencargo.common.items.ItemCard;
 import com.pclogix.opencargo.common.items.ItemTag;
 import li.cil.oc.api.Network;
@@ -7,12 +8,14 @@ import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.Visibility;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -23,41 +26,15 @@ public class TagReaderTileEntity extends TileEntityOCBase implements ITickable {
 
     public static final int SIZE = 1;
     public boolean hasCards = false;
-    private ItemReaderInventory inventoryInput = new ItemReaderInventory();
+    private ItemReaderInventory inventoryInput;
 
-    class ItemReaderInventory extends ItemStackHandler {
-        public ItemReaderInventory(){
-            super(1);
-        }
-
-        @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            if(!(stack.getItem() instanceof ItemCard)) {
-                return stack;
-            }
-            if (stack.getTagCompound() == null) {
-                return stack;
-            }
-            return super.insertItem(slot, stack, simulate);
-        }
-
-        @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack){
-            switch(slot){
-                case 0: return stack.getItem() instanceof ItemCard;
-                default: return false;
-            }
-        }
-
-        @Override
-        public void onContentsChanged(int slot){
-            super.onContentsChanged(slot);
-            //updateStackTags(getStackInSlot(slot));
-        }
+    public ItemReaderInventory getInventory() {
+        return this.inventoryInput;
     }
 
     public TagReaderTileEntity() {
         super("oc_tagreader");
+        this.inventoryInput = new ItemReaderInventory(SIZE);
         node = Network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector(32).create();
     }
 
@@ -129,7 +106,7 @@ public class TagReaderTileEntity extends TileEntityOCBase implements ITickable {
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (facing != null && capability.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)) {
-            return (T) inventoryInput;
+            return (T) this.getInventory();
         }
         return super.getCapability(capability, facing);
     }

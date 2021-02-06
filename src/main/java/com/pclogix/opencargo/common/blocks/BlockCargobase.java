@@ -19,7 +19,7 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 /* implements facing blockstate */
-public abstract class BlockCargobase extends Block implements ITileEntityProvider {
+public abstract class BlockCargobase extends Block implements ITileEntityProvider /*, IInventory*/ {
     protected Random random;
 
     public static final PropertyDirection PROPERTYFACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
@@ -61,20 +61,5 @@ public abstract class BlockCargobase extends Block implements ITileEntityProvide
 
     public static EnumFacing getFacing(IBlockState state) {
         return state.getValue(PROPERTYFACING);
-    }
-    
-    /**
-     * Called serverside after this block is replaced with another in Chunk, but before the Tile Entity is updated
-     */
-    @Override
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        TileEntity tileentity = worldIn.getTileEntity(pos);
-
-        if (tileentity instanceof IInventory) {
-            InventoryHelper.dropInventoryItems(worldIn, pos, (IInventory) tileentity);
-            worldIn.updateComparatorOutputLevel(pos, this);
-        }
-
-        super.breakBlock(worldIn, pos, state);
     }
 }

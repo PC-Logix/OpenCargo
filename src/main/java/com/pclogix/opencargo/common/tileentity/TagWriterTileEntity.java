@@ -1,5 +1,6 @@
 package com.pclogix.opencargo.common.tileentity;
 
+import com.pclogix.opencargo.common.container.ItemWriterInventory;
 import com.pclogix.opencargo.common.items.ItemCard;
 import com.pclogix.opencargo.common.items.ItemTag;
 import li.cil.oc.api.Network;
@@ -9,7 +10,6 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.Visibility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -26,53 +26,12 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
     public static final int SIZE = 2;
     public boolean hasCards = false;
 
-    private ItemWriterInventory inventory = new ItemWriterInventory();
+    private ItemWriterInventory inventory;
 
-    class ItemWriterInventory extends ItemStackHandler {
-        public ItemWriterInventory(){
-            super(SIZE);
-        }
-
-        @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            if(!(stack.getItem() instanceof ItemCard)) {
-                return stack;
-            }
-            if (stack.getTagCompound() != null) {
-                if (stack.getTagCompound().hasKey("data")) {
-                    return stack;
-                }
-            }
-            if (slot != 0)
-                return stack;
-            return super.insertItem(slot, stack, simulate);
-        }
-
-        @Nonnull
-        @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (slot != 1)
-                return ItemStack.EMPTY;
-            return super.extractItem(slot, amount, simulate);
-        }
-
-        @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack){
-            switch(slot){
-                case 0: return stack.getItem() instanceof ItemCard;
-                default: return false;
-            }
-        }
-
-        @Override
-        public void onContentsChanged(int slot){
-            super.onContentsChanged(slot);
-            //updateStackTags(getStackInSlot(slot));
-        }
-    }
 
     public TagWriterTileEntity() {
         super("oc_tagwriter");
+        this.inventory = new ItemWriterInventory(SIZE);
         node = Network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector(32).create();
     }
 
@@ -208,5 +167,9 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         }
 
         return super.getCapability(capability, facing);
+    }
+
+    public ItemWriterInventory getInventory() {
+        return this.inventory;
     }
 }

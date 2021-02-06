@@ -1,6 +1,7 @@
 package com.pclogix.opencargo.common.blocks;
 
 import com.pclogix.opencargo.OpenCargo;
+import com.pclogix.opencargo.common.tileentity.TagReaderTileEntity;
 import com.pclogix.opencargo.common.tileentity.TagWriterTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -9,6 +10,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -55,5 +58,16 @@ public class TagWriterBlock extends BlockCargobase implements ITileEntityProvide
         }
         player.openGui(OpenCargo.instance, GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
+    }
+
+    @Override
+    public void breakBlock(final World world, final BlockPos pos, final IBlockState state) {
+        final TileEntity tile = world.getTileEntity(pos);
+        if ((tile != null) && (tile instanceof TagWriterTileEntity)) {
+            final TagWriterTileEntity TagWriter = (TagWriterTileEntity) tile;
+            TagWriter.getInventory().dropItems(world, pos.getX(), pos.getY(), pos.getZ());
+        }
+
+        super.breakBlock(world, pos, state);
     }
 }
