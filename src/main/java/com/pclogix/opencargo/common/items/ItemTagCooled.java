@@ -6,7 +6,7 @@ public class ItemTagCooled extends ItemCard {
     public static final String NAME = "itemtagcooled";
     public static ItemStack DEFAULTSTACK;
 
-    public ItemTagCooled() {
-        super(NAME);
+    public ItemTagCooled(String name) {
+        super(name);
     }
 }

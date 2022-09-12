@@ -6,7 +6,7 @@ public class ItemTagFluid extends ItemCard {
     public static final String NAME = "itemtagfluid";
     public static ItemStack DEFAULTSTACK;
 
-    public ItemTagFluid() {
-        super(NAME);
+    public ItemTagFluid(String name) {
+        super(name);
     }
 }

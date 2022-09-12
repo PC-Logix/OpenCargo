@@ -1,15 +1,9 @@
 package com.pclogix.opencargo;
 
-import akka.event.Logging;
-import com.google.gson.JsonObject;
-import com.pclogix.opencargo.common.ContentRegistry;
-import com.pclogix.opencargo.common.items.ItemCard;
+import com.pclogix.opencargo.common.RegistryEventHandler;
 import com.pclogix.opencargo.proxy.CommonProxy;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.crafting.IConditionFactory;
-import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -18,8 +12,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.function.BooleanSupplier;
 
 @Mod.EventBusSubscriber
 @Mod(modid = OpenCargo.MODID, name = OpenCargo.NAME, version = OpenCargo.VERSION,
@@ -39,20 +31,20 @@ class OpenCargo
 
     public static final Logger LOGGER = LogManager.getLogger(OpenCargo.MODID);
 
-    public static ContentRegistry contentRegistry = new ContentRegistry();
+    public static RegistryEventHandler contentRegistry = new RegistryEventHandler();
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         LOGGER.info(NAME + " FMLPreInitializationEvent");
         proxy.preInit(e);
-        ContentRegistry.preInit();
+        //ContentRegistry.preInit();
         MinecraftForge.EVENT_BUS.register(contentRegistry);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
         proxy.init(e);
-        ContentRegistry.init();
+        //ContentRegistry.init();
         LOGGER.info(NAME + " FMLInitializationEvent");
     }
 

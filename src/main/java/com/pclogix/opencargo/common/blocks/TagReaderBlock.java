@@ -2,15 +2,11 @@ package com.pclogix.opencargo.common.blocks;
 
 import com.pclogix.opencargo.OpenCargo;
 import com.pclogix.opencargo.common.tileentity.TagReaderTileEntity;
-import com.pclogix.opencargo.common.tileentity.TagWriterTileEntity;
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -28,8 +24,9 @@ public class TagReaderBlock extends BlockCargobase {
 
     public static final int GUI_ID = 2;
 
-    public TagReaderBlock() {
-        super(NAME, Material.IRON, 0.5f);
+    public TagReaderBlock(String name, Material material)
+    {
+        super(name, material);
     }
 
     @SideOnly(Side.CLIENT)

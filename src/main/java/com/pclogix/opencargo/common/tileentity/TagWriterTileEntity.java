@@ -1,8 +1,7 @@
 package com.pclogix.opencargo.common.tileentity;
 
 import com.pclogix.opencargo.common.container.ItemWriterInventory;
-import com.pclogix.opencargo.common.items.ItemCard;
-import com.pclogix.opencargo.common.items.ItemTag;
+import com.pclogix.opencargo.common.items.*;
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
@@ -23,7 +22,7 @@ import java.awt.*;
 
 public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
 
-    public static final int SIZE = 2;
+    public static final int SIZE = 9;
     public boolean hasCards = false;
 
     private ItemWriterInventory inventory;
@@ -53,48 +52,64 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
 
 
 
-    @Callback(doc = "function(string: data, string: displayName, int: count, int: color):string; writes data to the tag, 128 characters, the rest is silently discarded, 2nd argument will change the displayed name of the tag in your inventory. if you pass an integer to the 3rd argument you can craft up to 64 at a time, the 4th argument will set the color of the card, use OC's color api.", direct = true)
+    @Callback(doc = "function(string: cardType, int: slotIndex (1 based just like lua), string: data, string: displayName, int: count, int: color):string; writes data to the tag, 128 characters, the rest is silently discarded, 2nd argument will change the displayed name of the tag in your inventory. if you pass an integer to the 3rd argument you can craft up to 64 at a time, the 4th argument will set the color of the card, use OC's color api.", direct = true)
     public Object[] write(Context context, Arguments args) {
-        String data = args.checkString(0);
 
-        Integer count = args.optInteger(2, 1);
-
+        String cardType = args.checkString(0);
+        Integer slotIndex = args.checkInteger(1) - 1;
+        String data = args.checkString(2);
+        String title = args.optString(3, "");
+        Integer count = args.optInteger(4, 1);
+        Integer colorIndex = Math.max(0, Math.min(args.optInteger(5, 0), 15));
         if (data == null)
             return new Object[] { false, "Data is Null" };
 
         if (node.changeBuffer(-5) != 0)
             return new Object[] { false, "Not enough power in OC Network." };
 
-        if (inventory.getStackInSlot(0).isEmpty())
-            return new Object[] { false, "No card in slot" };
+        //if (inventory.getStackInSlot(0).isEmpty())
+            //return new Object[] { false, "No card in slot" };
 
-        if (inventory.getStackInSlot(0).getCount() - count < 0) {
-            return new Object[] { false, "Not enough tags" };
-        }
+        //if (inventory.getStackInSlot(0).getCount() - count < 0) {
+        //    return new Object[] { false, "Not enough tags" };
+        //}
 
         if (inventory.getStackInSlot(1).getCount() >= (65 - count)) {
             return new Object[] { false, "Not enough empty slots" };
         }
 
-
-        String title = args.optString(1, "");
-
-        int colorIndex = Math.max(0, Math.min(args.optInteger(3, 0), 15));
-
         float dyeColor[] = EnumDyeColor.byMetadata(colorIndex).getColorComponentValues();
         int color = new Color(dyeColor[0], dyeColor[1], dyeColor[2]).getRGB();
 
-        ItemStack outStack;
+        ItemStack outStack = new ItemStack(new ItemTag());
+        //if (inventory.getStackInSlot(0).getItem() instanceof ItemCard) {
+            if (cardType.equals("bulk")) {
+                System.out.println("bulk");
+                outStack = new ItemStack(ModItems.ITEMS[0]);
+            } else if (cardType.equals("cooled")) {
+                System.out.println("cooled");
+                outStack = new ItemStack(ModItems.ITEMS[1]);
+            } else if (cardType.equals("fluid")) {
+                System.out.println("fluid");
+                outStack = new ItemStack(ModItems.ITEMS[2]);
+            } else if (cardType.equals("living")) {
+                System.out.println("living");
+                outStack = new ItemStack(ModItems.ITEMS[3]);
+            } else if (cardType.equals("long")) {
+                System.out.println("long");
+                outStack = new ItemStack(ModItems.ITEMS[4]);
+            } else if (cardType.equals("long2")) {
+                System.out.println("long2");
+                outStack = new ItemStack(ModItems.ITEMS[5]);
+            }
 
-        if (inventory.getStackInSlot(0).getItem() instanceof ItemCard) {
-            outStack = new ItemStack(inventory.getStackInSlot(0).getItem());
             if (data.length() > 64) {
                 data = data.substring(0, 64);
             }
-        }  else
-            return new Object[] { false, "Wrong item in input slot" };
+        //}  else
+        //    return new Object[] { false, "Wrong item in input slot" };
 
-        ItemTag.CardTag cardTag = new ItemTag.CardTag(inventory.getStackInSlot(0));
+        ItemTag.CardTag cardTag = new ItemTag.CardTag(inventory.getStackInSlot(slotIndex));
 
         cardTag.color = color;
         cardTag.dataTag = data;
@@ -105,17 +120,20 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
             outStack.setStackDisplayName(title);
         }
 
-        inventory.getStackInSlot(0).setCount(inventory.getStackInSlot(0).getCount() - count);
-        if (inventory.getStackInSlot(1).getCount() > 0) {
-            inventory.getStackInSlot(1).setCount(inventory.getStackInSlot(1).getCount() + count);
-        } else {
-            inventory.setStackInSlot(1, outStack);
-            if (count > 1) {
-                inventory.getStackInSlot(1).setCount(inventory.getStackInSlot(1).getCount() + (count -1));
-            }
-        }
+        outStack.setCount(count);
 
-        return new Object[] { true };
+        //inventory.getStackInSlot(0).setCount(inventory.getStackInSlot(0).getCount() - count);
+        System.out.println("current item: " + inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName());
+        System.out.println("incoming item: " + outStack.getUnlocalizedName());
+        System.out.println("Is slot empty: " + inventory.getStackInSlot(slotIndex).isEmpty());
+        System.out.println("Count: " + outStack.getCount());
+        System.out.println("bleh: " + (inventory.getStackInSlot(slotIndex).isEmpty() || (inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName().equals(outStack.getUnlocalizedName()) && (inventory.getStackInSlot(slotIndex).getCount() > 0))));
+        if (inventory.getStackInSlot(slotIndex).isEmpty() || (inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName().equals(outStack.getUnlocalizedName()) && (inventory.getStackInSlot(slotIndex).getCount() > 0))) {
+            ItemStack insert = inventory.insertItem(slotIndex, outStack, false);
+            return new Object[] { true, insert.getCount() };
+        } else {
+            return new Object[] {false};
+        }
     }
 
     @Override

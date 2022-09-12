@@ -6,7 +6,11 @@ public class ItemTagBulk extends ItemCard {
     public static final String NAME = "itemtagbulk";
     public static ItemStack DEFAULTSTACK;
 
-    public ItemTagBulk() {
-        super(NAME);
+    public ItemTagBulk(String name) {
+        super(name);
+    }
+
+    public String getName() {
+        return NAME;
     }
 }

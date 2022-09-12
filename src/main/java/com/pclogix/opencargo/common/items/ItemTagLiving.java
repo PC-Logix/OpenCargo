@@ -6,7 +6,7 @@ public class ItemTagLiving extends ItemCard {
     public static final String NAME = "itemtagliving";
     public static ItemStack DEFAULTSTACK;
 
-    public ItemTagLiving() {
-        super(NAME);
+    public ItemTagLiving(String name) {
+        super(name);
     }
 }

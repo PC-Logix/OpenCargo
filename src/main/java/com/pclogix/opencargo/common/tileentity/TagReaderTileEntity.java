@@ -1,21 +1,17 @@
 package com.pclogix.opencargo.common.tileentity;
 
 import com.pclogix.opencargo.common.container.ItemReaderInventory;
-import com.pclogix.opencargo.common.items.ItemCard;
-import com.pclogix.opencargo.common.items.ItemTag;
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.Visibility;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -40,9 +36,17 @@ public class TagReaderTileEntity extends TileEntityOCBase implements ITickable {
 
     @Callback
     public Object[] read(Context context, Arguments args) {
+
+        Boolean delete = args.optBoolean(0, false);
         if (!inventoryInput.getStackInSlot(0).isEmpty()) {
-            return new Object[] { true, inventoryInput.getStackInSlot(0).getTagCompound().getString("data"), inventoryInput.getStackInSlot(0).getCount() };
+            ItemStack cardData = inventoryInput.getStackInSlot(0);
+            if (delete) {
+                System.out.println("trying to delete");
+                inventoryInput.setStackInSlot(0, new ItemStack(Items.AIR));
+            }
+            return new Object[] { true, cardData.getTagCompound().getString("data"), cardData.getCount(), cardData.getItem().getRegistryName() };
         }
+
 
         return new Object[] { false, "No tag" };
     }

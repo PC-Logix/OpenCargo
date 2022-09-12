@@ -1,12 +1,8 @@
 package com.pclogix.opencargo.common.blocks;
 
 import com.pclogix.opencargo.OpenCargo;
-import com.pclogix.opencargo.common.ContentRegistry;
 import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
@@ -24,14 +20,12 @@ public abstract class BlockCargobase extends Block implements ITileEntityProvide
 
     public static final PropertyDirection PROPERTYFACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
-    protected BlockCargobase(String name, Material materialIn, float hardness) {
-        super(materialIn);
-        setUnlocalizedName("opencargo." + name);
-        setRegistryName(OpenCargo.MODID, name);
-        setHardness(hardness);
-        setCreativeTab(ContentRegistry.creativeTab);
+    protected BlockCargobase(String name, Material material)
+    {
+        super(material);
 
-        random = new Random();
+        this.setRegistryName(OpenCargo.MODID, name);
+        this.setUnlocalizedName(this.getRegistryName().toString());
     }
 
     @Override

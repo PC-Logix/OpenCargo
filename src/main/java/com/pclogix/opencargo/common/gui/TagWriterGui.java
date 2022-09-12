@@ -35,7 +35,7 @@ public class TagWriterGui extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int param1, int param2) {
-        drawCenteredString(new TextComponentTranslation("opencargo.gui.string.tagslot").getUnformattedText(), 20, 4210752);
+        //drawCenteredString(new TextComponentTranslation("opencargo.gui.string.tagslot").getUnformattedText(), 20, 4210752);
         drawCenteredString(new TextComponentTranslation("opencargo.gui.string.tagwriter").getUnformattedText(), 5, 4210752);
     }
 

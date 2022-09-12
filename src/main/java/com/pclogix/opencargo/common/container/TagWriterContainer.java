@@ -44,9 +44,16 @@ public class TagWriterContainer extends Container {
 
     private void addOwnSlots() {
         IItemHandler itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.EAST);
-        // Add our own slots
-        addSlotToContainer(new CardInputSlot(itemHandler, 0, 80, 36));
-        addSlotToContainer(new CardOutputSlot(itemHandler, 1, 80, 87));
+        int index = 0;
+
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 3; ++col) {
+                int x = 62 + col * 18;
+                int y = row * 18 + 28;
+                this.addSlotToContainer(new CardOutputSlot(itemHandler, index, x, y));
+                index++;
+            }
+        }
     }
 
     @Override

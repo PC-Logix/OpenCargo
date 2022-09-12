@@ -1,15 +1,15 @@
 # Items
-item.opencargo.itemtag.name=Tag
-item.opencargo.itemtagfluid.name=Fluid Tag
-item.opencargo.itemtagbulk.name=Bulk Tag
-item.opencargo.itemtagcooled.name=Cooled Tag
-item.opencargo.itemtagliving.name=Living Tag
-item.opencargo.itemtaglong.name=Long Tag
-item.opencargo.itemtaglong2.name= Long 2 Tag
+item.opencargo:itemtag.name=Tag
+item.opencargo:itemtagfluid.name=Fluid Tag
+item.opencargo:itemtagbulk.name=Bulk Tag
+item.opencargo:itemtagcooled.name=Cooled Tag
+item.opencargo:itemtagliving.name=Living Tag
+item.opencargo:itemtaglong.name=Long Tag
+item.opencargo:itemtaglong2.name= Long 2 Tag
 
 # Blocks
-tile.opencargo.tagwriterblock.name=Tag Writer
-tile.opencargo.tagreaderblock.name=Tag Reader
+tile.opencargo:tagwriterblock.name=Tag Writer
+tile.opencargo:tagreaderblock.name=Tag Reader
 
 # Creative Tabs
 itemGroup.opencargo.tabopencargo=Open Cargo

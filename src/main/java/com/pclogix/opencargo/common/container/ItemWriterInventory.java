@@ -17,7 +17,7 @@ public class ItemWriterInventory extends ItemStackHandler {
     public ItemWriterInventory(final NonNullList<ItemStack> stacks) {
         super(stacks);
     }
-
+/**
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if(!(stack.getItem() instanceof ItemCard)) {
@@ -28,19 +28,17 @@ public class ItemWriterInventory extends ItemStackHandler {
                 return stack;
             }
         }
-        if (slot != 0)
-            return stack;
+
         return super.insertItem(slot, stack, simulate);
     }
 
     @Nonnull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (slot != 1)
-            return ItemStack.EMPTY;
+
         return super.extractItem(slot, amount, simulate);
     }
-
+**/
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack){
         switch(slot){

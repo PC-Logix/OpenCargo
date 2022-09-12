@@ -1,23 +1,17 @@
 package com.pclogix.opencargo.common.blocks;
 
 import com.pclogix.opencargo.OpenCargo;
-import com.pclogix.opencargo.common.tileentity.TagReaderTileEntity;
 import com.pclogix.opencargo.common.tileentity.TagWriterTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -31,8 +25,9 @@ public class TagWriterBlock extends BlockCargobase implements ITileEntityProvide
 
     public static final int GUI_ID = 1;
 
-    public TagWriterBlock() {
-        super(NAME, Material.IRON, 0.5f);
+    public TagWriterBlock(String name, Material material)
+    {
+        super(name, material);
     }
 
     @SideOnly(Side.CLIENT)
