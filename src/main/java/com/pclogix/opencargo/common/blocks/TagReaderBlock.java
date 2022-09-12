@@ -27,6 +27,7 @@ public class TagReaderBlock extends BlockCargobase {
     public TagReaderBlock(String name, Material material)
     {
         super(name, material);
+        setCreativeTab(OpenCargo.CreativeTab);
     }
 
     @SideOnly(Side.CLIENT)
