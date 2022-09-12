@@ -130,9 +130,12 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         System.out.println("bleh: " + (inventory.getStackInSlot(slotIndex).isEmpty() || (inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName().equals(outStack.getUnlocalizedName()) && (inventory.getStackInSlot(slotIndex).getCount() > 0))));
         if (inventory.getStackInSlot(slotIndex).isEmpty() || (inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName().equals(outStack.getUnlocalizedName()) && (inventory.getStackInSlot(slotIndex).getCount() > 0))) {
             ItemStack insert = inventory.insertItem(slotIndex, outStack, false);
-            return new Object[] { true, insert.getCount() };
+            if (count.equals(insert.getCount())) {
+                return new Object[] {false, -1};
+            }
+            return new Object[] { true, (count - insert.getCount()) };
         } else {
-            return new Object[] {false};
+            return new Object[] {false, "slot " + (slotIndex + 1) + " contains " + inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName()};
         }
     }
 
