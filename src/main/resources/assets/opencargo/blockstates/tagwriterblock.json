@@ -2,9 +2,9 @@
   "forge_marker": 1,
   "defaults": {
     "textures": {
-      "top": "opencargo:blocks/machine_side",
+      "top": "opencargo:blocks/tagwriter",
       "front": "opencargo:blocks/tagwriter",
-      "side": "opencargo:blocks/machine_side"
+      "side": "opencargo:blocks/tagwriter"
     },
     "model": "minecraft:orientable"
   },
