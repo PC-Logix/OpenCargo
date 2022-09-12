@@ -67,13 +67,6 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         if (node.changeBuffer(-5) != 0)
             return new Object[] { false, "Not enough power in OC Network." };
 
-        //if (inventory.getStackInSlot(0).isEmpty())
-            //return new Object[] { false, "No card in slot" };
-
-        //if (inventory.getStackInSlot(0).getCount() - count < 0) {
-        //    return new Object[] { false, "Not enough tags" };
-        //}
-
         if (inventory.getStackInSlot(1).getCount() >= (65 - count)) {
             return new Object[] { false, "Not enough empty slots" };
         }
@@ -81,8 +74,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         float dyeColor[] = EnumDyeColor.byMetadata(colorIndex).getColorComponentValues();
         int color = new Color(dyeColor[0], dyeColor[1], dyeColor[2]).getRGB();
 
-        ItemStack outStack = new ItemStack(new ItemTag());
-        //if (inventory.getStackInSlot(0).getItem() instanceof ItemCard) {
+        ItemStack outStack;
             if (cardType.equals("bulk")) {
                 System.out.println("bulk");
                 outStack = new ItemStack(ModItems.ITEMS[0]);
@@ -101,13 +93,14 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
             } else if (cardType.equals("long2")) {
                 System.out.println("long2");
                 outStack = new ItemStack(ModItems.ITEMS[5]);
+            } else {
+                return new Object[] {false, "invalid tag name passed"};
             }
 
             if (data.length() > 64) {
                 data = data.substring(0, 64);
             }
-        //}  else
-        //    return new Object[] { false, "Wrong item in input slot" };
+
 
         ItemTag.CardTag cardTag = new ItemTag.CardTag(inventory.getStackInSlot(slotIndex));
 
@@ -123,11 +116,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         outStack.setCount(count);
 
         //inventory.getStackInSlot(0).setCount(inventory.getStackInSlot(0).getCount() - count);
-        System.out.println("current item: " + inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName());
-        System.out.println("incoming item: " + outStack.getUnlocalizedName());
-        System.out.println("Is slot empty: " + inventory.getStackInSlot(slotIndex).isEmpty());
-        System.out.println("Count: " + outStack.getCount());
-        System.out.println("bleh: " + (inventory.getStackInSlot(slotIndex).isEmpty() || (inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName().equals(outStack.getUnlocalizedName()) && (inventory.getStackInSlot(slotIndex).getCount() > 0))));
+
         if (inventory.getStackInSlot(slotIndex).isEmpty() || (inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName().equals(outStack.getUnlocalizedName()) && (inventory.getStackInSlot(slotIndex).getCount() > 0))) {
             ItemStack insert = inventory.insertItem(slotIndex, outStack, false);
             if (count.equals(insert.getCount())) {

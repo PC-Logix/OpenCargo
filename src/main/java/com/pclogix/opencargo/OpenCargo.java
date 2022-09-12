@@ -2,6 +2,7 @@ package com.pclogix.opencargo;
 
 import com.pclogix.opencargo.common.RegistryEventHandler;
 import com.pclogix.opencargo.proxy.CommonProxy;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -30,6 +31,7 @@ class OpenCargo
     public static OpenCargo instance;
 
     public static final Logger LOGGER = LogManager.getLogger(OpenCargo.MODID);
+    public static CreativeTabs CreativeTab = new CreativeTab("OpenCargo");
 
     public static RegistryEventHandler contentRegistry = new RegistryEventHandler();
 

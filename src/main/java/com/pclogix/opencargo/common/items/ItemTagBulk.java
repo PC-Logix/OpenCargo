@@ -1,5 +1,6 @@
 package com.pclogix.opencargo.common.items;
 
+import com.pclogix.opencargo.OpenCargo;
 import net.minecraft.item.ItemStack;
 
 public class ItemTagBulk extends ItemCard {
@@ -8,6 +9,7 @@ public class ItemTagBulk extends ItemCard {
 
     public ItemTagBulk(String name) {
         super(name);
+        setCreativeTab(OpenCargo.CreativeTab);
     }
 
     public String getName() {

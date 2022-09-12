@@ -28,6 +28,7 @@ public class TagWriterBlock extends BlockCargobase implements ITileEntityProvide
     public TagWriterBlock(String name, Material material)
     {
         super(name, material);
+        setCreativeTab(OpenCargo.CreativeTab);
     }
 
     @SideOnly(Side.CLIENT)
