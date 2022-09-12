@@ -97,8 +97,8 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
                 return new Object[] {false, "invalid tag name passed"};
             }
 
-            if (data.length() > 64) {
-                data = data.substring(0, 64);
+            if (data.length() > 128) {
+                data = data.substring(0, 128);
             }
 
 
