@@ -1,7 +1,8 @@
 package com.pclogix.opencargo.common.tileentity;
 
 import com.pclogix.opencargo.common.container.ItemWriterInventory;
-import com.pclogix.opencargo.common.items.*;
+import com.pclogix.opencargo.common.items.ItemTag;
+import com.pclogix.opencargo.common.items.ModItems;
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
@@ -26,7 +27,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
     public boolean hasCards = false;
 
     private ItemWriterInventory inventory;
-
+    private String password = "";
 
     public TagWriterTileEntity() {
         super("oc_tagwriter");
@@ -50,17 +51,54 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         }
     }
 
+    public String getPass() {
+        return this.password;
+    }
+
+    @Callback
+    public Object[] removePassword(Context context, Arguments args) {
+            if (args.checkString(0).equals(getPass())) {
+                setPassword("");
+                return new Object[] { true, "Password Removed" };
+            } else {
+                return new Object[] { false, "Password was not removed" };
+            }
+    }
+
+    @Callback
+    public Object[] setPassword(Context context, Arguments args) {
+            if (getPass().isEmpty()) {
+                setPassword(args.checkString(0));
+
+                return new Object[] { true, "Password set" };
+            } else {
+                if (args.checkString(0).equals(getPass())) {
+                    setPassword(args.checkString(1));
+                    return new Object[] { true, "Password Changed" };
+                } else {
+                    return new Object[] { false, "Password was not changed" };
+                }
+            }
+    }
 
 
-    @Callback(doc = "function(string: cardType, int: slotIndex (1 based just like lua), string: data, string: displayName, int: count, int: color):string; writes data to the tag, 128 characters, the rest is silently discarded, 2nd argument will change the displayed name of the tag in your inventory. if you pass an integer to the 3rd argument you can craft up to 64 at a time, the 4th argument will set the color of the card, use OC's color api.", direct = true)
+    public void setPassword(String pass) {
+        this.password = pass;
+    }
+
+    @Callback(doc = "function(string: password, string: cardType, int: slotIndex (1 based just like lua), string: data, string: displayName, int: count, int: color):string; writes data to the tag, 128 characters, the rest is silently discarded, 2nd argument will change the displayed name of the tag in your inventory. if you pass an integer to the 3rd argument you can craft up to 64 at a time, the 4th argument will set the color of the card, use OC's color api.", direct = true)
     public Object[] write(Context context, Arguments args) {
+        String password = args.checkString(0);
+        String cardType = args.checkString(1);
+        Integer slotIndex = args.checkInteger(2) - 1;
+        String data = args.checkString(3);
+        String title = args.optString(4, "");
+        Integer count = args.optInteger(5, 1);
+        Integer colorIndex = Math.max(0, Math.min(args.optInteger(6, 0), 15));
 
-        String cardType = args.checkString(0);
-        Integer slotIndex = args.checkInteger(1) - 1;
-        String data = args.checkString(2);
-        String title = args.optString(3, "");
-        Integer count = args.optInteger(4, 1);
-        Integer colorIndex = Math.max(0, Math.min(args.optInteger(5, 0), 15));
+        if (!password.equals(getPass()))
+            return new Object[] { false, "Password mismatch" };
+
         if (data == null)
             return new Object[] { false, "Data is Null" };
 
