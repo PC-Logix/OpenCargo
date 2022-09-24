@@ -86,7 +86,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         this.password = pass;
     }
 
-    @Callback(doc = "function(string: password, string: cardType, int: slotIndex (1 based just like lua), string: data, string: displayName, int: count, int: color):string; writes data to the tag, 128 characters, the rest is silently discarded, 2nd argument will change the displayed name of the tag in your inventory. if you pass an integer to the 3rd argument you can craft up to 64 at a time, the 4th argument will set the color of the card, use OC's color api.", direct = true)
+    @Callback(doc = "function(string: password, string: cardType, int: slotIndex (1 based just like lua), string: data, string: displayName, int: count, int: color):string; writes data to the tag, 128 characters, the rest is silently discarded, displayName will change the displayed name of the tag in your inventory. if you pass an integer to count you can craft up to 64 at a time, color will set the color of the item using OC's color api.", direct = true)
     public Object[] write(Context context, Arguments args) {
         String password = args.checkString(0);
         String cardType = args.checkString(1);
@@ -164,6 +164,12 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         } else {
             return new Object[] {false, "slot " + (slotIndex + 1) + " contains " + inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName()};
         }
+    }
+
+    @Callback(doc = "function(int: slotIndex): int; Gets the number of items in the specified slot.", direct = true)
+    public Object[] getCountInSlot(Context context, Arguments args) {
+        int slotIndex = args.checkInteger(0) -1;
+        return new Object[] { inventory.getStackInSlot(slotIndex).getCount() };
     }
 
     @Override
