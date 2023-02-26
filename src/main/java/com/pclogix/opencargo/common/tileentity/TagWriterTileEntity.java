@@ -105,7 +105,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         if (node.changeBuffer(-5) != 0)
             return new Object[] { false, "Not enough power in OC Network." };
 
-        if (inventory.getStackInSlot(1).getCount() >= (65 - count)) {
+        if (inventory.getStackInSlot(slotIndex).getCount() >= (65 - count)) {
             return new Object[] { false, "Not enough empty slots" };
         }
 
