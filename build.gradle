@@ -11,7 +11,27 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.0.4"
+def getGitRef() {
+  try {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+      commandLine 'git', 'rev-parse', '--short', 'HEAD'
+      standardOutput = stdout
+    }
+    return stdout.toString().trim()
+  } catch (Throwable e) {
+    return "unknown"
+  }
+}
+
+if (System.getenv("PROMOTED_NUMBER") != null)
+    buildNumber = "${System.getenv("PROMOTED_NUMBER")}"
+else if (System.getenv("BUILD_NUMBER") != null)
+    buildNumber = "${System.getenv("BUILD_NUMBER")}"
+else
+    buildNumber = "+" + getGitRef()
+
+version = "1.0"
 group = "com.pclogix.opencargo" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "opencargo"
 
@@ -25,6 +45,8 @@ minecraft {
     runDir = "run"
     mappings = "snapshot_20171003"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+	replace "@VERSION@", project.version
+	replace "@BUILD@", project.buildNumber
 }
 
 repositories {
@@ -52,7 +74,8 @@ processResources {
         include 'mcmod.info'
 
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        //expand 'version':project.version, 'mcversion':project.minecraft.version
+		expand 'version':project.version + "-" + project.buildNumber, 'mcversion':project.minecraft.version
     }
 
     // copy everything else except the mcmod.info
