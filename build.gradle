@@ -31,7 +31,7 @@ else if (System.getenv("BUILD_NUMBER") != null)
 else
     buildNumber = "+" + getGitRef()
 
-version = "1.0"
+version = "1.0-" + buildNumber
 group = "com.pclogix.opencargo" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "opencargo"
 
