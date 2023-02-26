@@ -15,7 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod.EventBusSubscriber
-@Mod(modid = OpenCargo.MODID, name = OpenCargo.NAME, version = OpenCargo.VERSION - OpenCargo.BUILDNUMBER,
+@Mod(modid = OpenCargo.MODID, name = OpenCargo.NAME, version = OpenCargo.VERSION + "-" + OpenCargo.BUILDNUMBER,
         dependencies = "required-after:opencomputers;")
 public
 class OpenCargo
