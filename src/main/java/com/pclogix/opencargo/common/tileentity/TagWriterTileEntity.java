@@ -73,11 +73,12 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
                 return new Object[] { true, "Password set" };
             } else {
                 if (args.checkString(0).equals(getPass())) {
-                    setPassword(args.checkString(1));
-                    return new Object[] { true, "Password Changed" };
-                } else {
-                    return new Object[] { false, "Password was not changed" };
+                    try {
+                        setPassword(args.checkString(1));
+                        return new Object[]{true, "Password Changed"};
+                    } catch (Exception ignored) {}
                 }
+                return new Object[] { false, "Password was not changed" };
             }
     }
 
