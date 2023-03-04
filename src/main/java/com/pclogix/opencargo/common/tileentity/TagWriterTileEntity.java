@@ -98,16 +98,16 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         Integer colorIndex = Math.max(0, Math.min(args.optInteger(6, 0), 15));
 
         if (!password.equals(getPass()))
-            return new Object[] { false, "Password mismatch" };
+            return new Object[] { false, 0, "Password mismatch" };
 
         if (data == null)
-            return new Object[] { false, "Data is Null" };
+            return new Object[] { false, 0, "Data is Null" };
 
         if (node.changeBuffer(-5) != 0)
-            return new Object[] { false, "Not enough power in OC Network." };
+            return new Object[] { false, 0, "Not enough power in OC Network." };
 
-        if (inventory.getStackInSlot(slotIndex).getCount() >= (65 - count)) {
-            return new Object[] { false, "Not enough empty slots" };
+        if (inventory.getStackInSlot(slotIndex).getCount() >= 64) {
+            return new Object[] { true, 0, "Slot is full" };
         }
 
         float dyeColor[] = EnumDyeColor.byMetadata(colorIndex).getColorComponentValues();
@@ -133,7 +133,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
                 System.out.println("long2");
                 outStack = new ItemStack(ModItems.ITEMS[5]);
             } else {
-                return new Object[] {false, "invalid tag name passed"};
+                return new Object[] { false, 0, "invalid tag name passed" };
             }
 
             if (data.length() > 128) {
@@ -158,12 +158,12 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
 
         if (inventory.getStackInSlot(slotIndex).isEmpty() || (inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName().equals(outStack.getUnlocalizedName()) && (inventory.getStackInSlot(slotIndex).getCount() > 0))) {
             ItemStack insert = inventory.insertItem(slotIndex, outStack, false);
-            if (count.equals(insert.getCount())) {
-                return new Object[] {false, -1};
+            if (count.equals(insert.getCount())) { // If the inserted amount equals the requested amount return -1 ???
+                return new Object[] { false, -1, "??" };
             }
-            return new Object[] { true, (count - insert.getCount()) };
+            return new Object[] { true, (count - insert.getCount()), "Tags written successfully" };
         } else {
-            return new Object[] {false, "slot " + (slotIndex + 1) + " contains " + inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName()};
+            return new Object[] { false, 0, "slot " + (slotIndex + 1) + " contains " + inventory.getStackInSlot(slotIndex).getItem().getUnlocalizedName() };
         }
     }
 
