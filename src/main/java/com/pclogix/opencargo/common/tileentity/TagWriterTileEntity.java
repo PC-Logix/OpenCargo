@@ -87,7 +87,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         this.password = pass;
     }
 
-    @Callback(doc = "function(string: password, string: cardType, int: slotIndex (1 based just like lua), string: data, string: displayName, int: count, int: color):string; writes data to the tag, 128 characters, the rest is silently discarded, displayName will change the displayed name of the tag in your inventory. if you pass an integer to count you can craft up to 64 at a time, color will set the color of the item using OC's color api.", direct = true)
+    @Callback(doc = "function(string: password, string: cardType, int: slotIndex (1 based just like lua), string: data, string: displayName, int: count, int: color, int: color2, int: color3 Can either use a color index as the first value, or all three values as rgb):bool, int, string; writes data to the tag, 128 characters, the rest is silently discarded, displayName will change the displayed name of the tag in your inventory. if you pass an integer to count you can craft up to 64 at a time, color will set the color of the item using OC's color api.", direct = true)
     public Object[] write(Context context, Arguments args) {
         String password = args.checkString(0);
         String cardType = args.checkString(1);
@@ -95,7 +95,15 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         String data = args.checkString(3);
         String title = args.optString(4, "");
         Integer count = args.optInteger(5, 1);
-        Integer colorIndex = Math.max(0, Math.min(args.optInteger(6, 0), 15));
+        Integer color1 = Math.max(0, Math.min(255, args.optInteger(6, 0))); // If either color2 and color3 are unset this should be a color index
+        Integer color2 = Math.min(255, args.optInteger(7, -1));
+        Integer color3 = Math.min(255, args.optInteger(8, -1));
+
+        boolean colorIsIndex = false;
+        if (color2 == -1 || color3 == -1) {
+            color1 = Math.min(15, color1); // If color index clamp to max 15
+            colorIsIndex = true;
+        }
 
         if (!password.equals(getPass()))
             return new Object[] { false, 0, "Password mismatch" };
@@ -110,8 +118,13 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
             return new Object[] { true, 0, "Slot is full" };
         }
 
-        float dyeColor[] = EnumDyeColor.byMetadata(colorIndex).getColorComponentValues();
-        int color = new Color(dyeColor[0], dyeColor[1], dyeColor[2]).getRGB();
+        int color;
+        if (!colorIsIndex) {
+            color = new Color(color1, color2, color3).getRGB();
+        } else {
+            float[] dyeColor = EnumDyeColor.byMetadata(color1).getColorComponentValues();
+            color = new Color(dyeColor[0], dyeColor[1], dyeColor[2]).getRGB();
+        }
 
         ItemStack outStack;
             if (cardType.equals("bulk")) {
