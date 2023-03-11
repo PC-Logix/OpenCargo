@@ -127,24 +127,27 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
         }
 
         ItemStack outStack;
-            if (cardType.equals("bulk")) {
-                System.out.println("bulk");
+            if (cardType.equals("boxed")) {
+                System.out.println("boxed");
                 outStack = new ItemStack(ModItems.ITEMS[0]);
+            } else if (cardType.equals("bulk")) {
+                System.out.println("bulk");
+                outStack = new ItemStack(ModItems.ITEMS[1]);
             } else if (cardType.equals("cooled")) {
                 System.out.println("cooled");
-                outStack = new ItemStack(ModItems.ITEMS[1]);
+                outStack = new ItemStack(ModItems.ITEMS[2]);
             } else if (cardType.equals("fluid")) {
                 System.out.println("fluid");
-                outStack = new ItemStack(ModItems.ITEMS[2]);
+                outStack = new ItemStack(ModItems.ITEMS[3]);
             } else if (cardType.equals("living")) {
                 System.out.println("living");
-                outStack = new ItemStack(ModItems.ITEMS[3]);
+                outStack = new ItemStack(ModItems.ITEMS[4]);
             } else if (cardType.equals("long")) {
                 System.out.println("long");
-                outStack = new ItemStack(ModItems.ITEMS[4]);
+                outStack = new ItemStack(ModItems.ITEMS[5]);
             } else if (cardType.equals("long2")) {
                 System.out.println("long2");
-                outStack = new ItemStack(ModItems.ITEMS[5]);
+                outStack = new ItemStack(ModItems.ITEMS[6]);
             } else {
                 return new Object[] { false, 0, "invalid tag name passed" };
             }
