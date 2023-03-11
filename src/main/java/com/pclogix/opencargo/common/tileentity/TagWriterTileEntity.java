@@ -192,9 +192,10 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        if (data.hasKey("items")) {
-            //itemStackHandler.deserializeNBT((NBTTagCompound) data.getTag("items"));
-        }
+//        if (data.hasKey("items"))
+//            itemStackHandler.deserializeNBT((NBTTagCompound) data.getTag("items"));
+        if (data.hasKey("password"))
+            password = data.getString("password");
 
         inventory.deserializeNBT(data.getCompoundTag("inv"));
     }
@@ -203,6 +204,7 @@ public class TagWriterTileEntity extends TileEntityOCBase implements ITickable {
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("inv", inventory.serializeNBT());
+        data.setString("password", password);
         //data.setTag("items", itemStackHandler.serializeNBT());
         return data;
     }
